@@ -1,0 +1,204 @@
+<nav class="navbar navbar-expand-md sticky-top bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-md-5">
+        <a class="navbar-brand" href="/listings">
+            <i class="fa-solid fa-compass" style="color: #fe424d; font-size: 2rem;"></i>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/listings"><%= t.home %></a>
+                <a class="nav-link" href="/listings/new" style="white-space: nowrap;"><%= t.addNew %></a>
+            </div>
+
+            <div class="navbar-nav mx-auto position-relative search-container">
+                <form class="d-flex search-form" role="search" action="/listings" method="GET">
+                    <input class="search-input" 
+                           type="search" 
+                           placeholder="<%= t.searchPlaceholder %>" 
+                           name="search"
+                           id="search-input"
+                           autocomplete="off">
+                    <button class="search-btn" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+
+                <div id="search-dropdown" class="search-dropdown d-none shadow">
+                    <p class="dropdown-title">Suggested destinations</p>
+                    
+                    <div class="suggestion-item">
+                        <i class="fa-solid fa-location-arrow icon-nearby"></i>
+                        <div class="suggestion-text">
+                            <span class="place-name">Nearby</span>
+                            <span class="place-desc">Find what's around you</span>
+                        </div>
+                    </div>
+
+                    <div class="suggestion-item">
+                        <i class="fa-solid fa-mountain-sun icon-lonavala"></i>
+                        <div class="suggestion-text">
+                            <span class="place-name">Lonavala, Maharashtra</span>
+                            <span class="place-desc">For sights like Karla Caves</span>
+                        </div>
+                    </div>
+
+                    <div class="suggestion-item">
+                        <i class="fa-solid fa-umbrella-beach icon-goa"></i>
+                        <div class="suggestion-text">
+                            <span class="place-name">North Goa, Goa</span>
+                            <span class="place-desc">Popular beach destination</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navbar-nav ms-auto align-items-center">
+                <div class="nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-globe"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/change-lang/en">English</a></li>
+                        <li><a class="dropdown-item" href="/change-lang/hi">हिन्दी</a></li>
+                    </ul>
+                </div>
+
+                <% if(!currUser) { %>
+                    <a class="nav-link px-2" href="/signup">Signup</a>
+                    <a class="nav-link px-2" href="/login">Login</a>
+                <% } else { %>
+                    <div class="nav-item">
+                        <a class="btn btn-outline-dark btn-sm rounded-pill px-3" href="/logout">
+                            <i class="fa-solid fa-right-from-bracket"></i> <%= t.logout %>
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* 1. FLOATING SEARCH BAR CONTAINER */
+    .search-container {
+        width: 320px;
+        transition: 0.2s;
+    }
+
+    .search-form {
+        background: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 40px;
+        padding: 5px 8px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .search-form:hover {
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .search-input {
+        border: none !important;
+        outline: none !important;
+        padding: 5px 12px !important;
+        font-size: 0.85rem !important;
+        flex-grow: 1;
+        background: transparent;
+    }
+
+    /* 🔴 THE SMALL CIRCULAR BUTTON */
+    .search-btn {
+        background-color: #fe424d !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 !important;
+        transition: 0.2s;
+    }
+
+    .search-btn:hover {
+        background-color: #e63946 !important;
+    }
+
+    .search-btn i {
+        font-size: 0.75rem !important;
+    }
+
+    /* 🏠 DROPDOWN STYLING */
+    .search-dropdown {
+        position: absolute;
+        top: 115%;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.2rem 0;
+        z-index: 2000;
+        border: 1px solid #eeeeee;
+    }
+
+    .dropdown-title {
+        padding-left: 1.2rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 0.8rem;
+    }
+
+    .suggestion-item {
+        display: flex;
+        align-items: center;
+        padding: 0.6rem 1.2rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f7f7f7;
+    }
+
+    .suggestion-item i {
+        width: 35px;
+        height: 35px;
+        background: #f1f1f1;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.8rem;
+        font-size: 1rem;
+    }
+
+    .suggestion-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .place-name { font-weight: 600; font-size: 0.85rem; color: #222; }
+    .place-desc { font-size: 0.75rem; color: #717171; }
+
+    .icon-nearby { color: #0071c2; }
+    .icon-lonavala { color: #e51e50; }
+    .icon-goa { color: #dfa526; }
+
+    @media (max-width: 991px) {
+        .search-container {
+            width: 100% !important;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
