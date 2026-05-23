@@ -16,9 +16,9 @@ const transporter = nodemailer.createTransport({
 });
 
 // --- 2. DYNAMIC GOOGLE REDIRECT URI LOGIC ---
-// This automatically shifts your redirect endpoint depending on whether you are working locally or on Render
+// 🟢 FIXED: Your exact live Render domain is now configured right here!
 const REDIRECT_URI = process.env.NODE_ENV === "production"
-    ? "https://your-deployed-app-url.onrender.com/auth/google/callback" // 👈 Replace with your real live Render domain URL
+    ? "https://wanderlust-1fok.onrender.com/auth/google/callback" 
     : "http://localhost:3000/auth/google/callback";
 
 // --- 3. BASIC AUTHENTICATION ROUTES (OTP FLOW) ---
