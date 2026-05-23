@@ -14,23 +14,28 @@ router.route("/")
     .get(wrapAsync(async (req, res) => {
         let { search, category } = req.query;
         let query = {};
+
+        // 🟢 FIXED: Combined search and category parameters to run concurrently instead of mutually exclusive blocks
         if (category) {
-            query = { category: category };
-        } else if (search && search.trim() !== "") {
-            query = { 
-                $or: [
-                    { title: { $regex: search, $options: "i" } },
-                    { location: { $regex: search, $options: "i" } },
-                    { country: { $regex: search, $options: "i" } }
-                ] 
-            };
+            query.category = category;
         }
+
+        if (search && search.trim() !== "") {
+            query.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } },
+                { country: { $regex: search, $options: "i" } }
+            ];
+        }
+
         const allListings = await Listing.find(query);
-        res.render("listings/index", { allListings });
+        res.render("listings/index", { allListings, search });
     }))
     .post(isLoggedIn, upload.single("listing[image]"), wrapAsync(async (req, res) => {
         const newListing = new Listing(req.body.listing);
-        newListing.owner = req.user._id;
+        
+        // 🟢 FIXED: Switched old Passport req.user reference to your updated active session user_id
+        newListing.owner = req.session.user_id;
 
         try {
             const location = req.body.listing.location;
@@ -55,6 +60,17 @@ router.route("/")
         res.redirect("/listings");
     }));
 
+// --- GET: FETCH DISTINCT LOCATIONS FOR DROPDOWN AUTOCOMPLETE ---
+// 🟢 FIXED: Shifted route placement order ABOVE dynamic parameterized routes to prevent path hijacking crashes
+router.get("/api/locations", wrapAsync(async (req, res) => {
+    try {
+        const locations = await Listing.distinct("location");
+        res.json(locations);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch locations" });
+    }
+}));
+
 // --- NEW ROUTE ---
 router.get("/new", isLoggedIn, (req, res) => {
     res.render("listings/new");
@@ -76,14 +92,18 @@ router.route("/:id")
     .put(isLoggedIn, upload.single("listing[image]"), wrapAsync(async (req, res) => {
         const { id } = req.params;
         
-        // 🔒 SECURITY RESTORED: Checking if the current user owns the listing
         let listing = await Listing.findById(id);
-        if (!listing.owner.equals(res.locals.currUser._id)) {
+        if (!listing) {
+            req.flash("error", "Listing not found!");
+            return res.redirect("/listings");
+        }
+
+        // 🔒 SECURITY RESTORED: Checking ownership verification using active session parameters
+        if (!listing.owner.equals(req.session.user_id)) {
             req.flash("error", "You don't have permission to edit this listing.");
             return res.redirect(`/listings/${id}`);
         }
 
-        // Geocode the location
         try {
             const location = req.body.listing.location;
             const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
@@ -111,9 +131,14 @@ router.route("/:id")
     .delete(isLoggedIn, wrapAsync(async (req, res) => {
         const { id } = req.params;
         
-        // 🔒 SECURITY RESTORED: Checking if the current user owns the listing
         let listing = await Listing.findById(id);
-        if (!listing.owner.equals(res.locals.currUser._id)) {
+        if (!listing) {
+            req.flash("error", "Listing not found!");
+            return res.redirect("/listings");
+        }
+
+        // 🔒 SECURITY RESTORED: Checking ownership verification using active session parameters
+        if (!listing.owner.equals(req.session.user_id)) {
             req.flash("error", "You don't have permission to delete this listing.");
             return res.redirect(`/listings/${id}`);
         }
@@ -127,9 +152,12 @@ router.route("/:id")
 router.get("/:id/edit", isLoggedIn, wrapAsync(async (req, res) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
+    if (!listing) {
+        req.flash("error", "Listing not found!");
+        return res.redirect("/listings");
+    }
     
-    // Safety check for the edit form page as well
-    if (!listing.owner.equals(res.locals.currUser._id)) {
+    if (!listing.owner.equals(req.session.user_id)) {
         req.flash("error", "You don't have permission to edit this listing.");
         return res.redirect(`/listings/${id}`);
     }

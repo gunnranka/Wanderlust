@@ -1,0 +1,282 @@
+<% layout("/layout/boilerplate") %>
+
+<style>
+    /* System Typography & UI Specs */
+    .dashboard-wrapper { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; color: #222222; }
+    .side-nav-heading { font-weight: 700; color: #222222; font-size: 2rem; margin-bottom: 24px; }
+    .pane-title { font-weight: 700; color: #222222; font-size: 1.75rem; letter-spacing: -0.5px; }
+    .text-muted-custom { color: #717171 !important; font-size: 14px; }
+    
+    /* Interactive Left Sidebar Nav Styles */
+    .dash-sidebar-btn { transition: all 0.15s ease; border-radius: 12px !important; color: #222222 !important; border: none !important; background: transparent; padding: 14px 16px !important; width: 100%; text-align: left; display: flex; align-items: center; gap: 16px; font-weight: 400; }
+    .dash-sidebar-btn i { font-size: 1.1rem; width: 24px; text-align: center; color: #222222; }
+    .dash-sidebar-btn:hover:not(.active) { background-color: #f7f7f7 !important; }
+    .dash-sidebar-btn.active { background-color: #f7f7f7 !important; font-weight: 600; }
+
+    /* Account Settings Grid Spec */
+    .settings-row { border-bottom: 1px solid #ebebeb; padding: 24px 0; display: flex; justify-content: space-between; align-items: baseline; }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-weight: 500; color: #222222; font-size: 16px; margin-bottom: 4px; }
+    .settings-value { color: #717171; font-size: 14px; }
+    .settings-action-link { color: #222222 !important; font-weight: 600; font-size: 14px; text-decoration: underline; }
+
+    /* Custom Border Styles */
+    .border-dashed-custom { border: 1px solid #cccccc !important; border-style: dashed !important; border-radius: 16px; }
+    .msg-sidebar { border-right: 1px solid #ebebeb; min-height: 450px; }
+    
+    /* Language Grid Options */
+    .lang-box { padding: 12px; border-radius: 8px; transition: 0.15s; cursor: pointer; }
+    .lang-box:hover { background-color: #f7f7f7; }
+</style>
+
+<div class="container mt-5 mb-5 dashboard-wrapper">
+    <div class="row pt-2">
+        
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="d-flex flex-column gap-1 pe-lg-3 nav nav-tabs border-0" id="dashboardMasterTabs" role="tablist">
+                <h1 class="side-nav-heading">Account</h1>
+                
+                <button class="nav-link dash-sidebar-btn active" id="menu-profile-tab" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab">
+                    <div class="text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 24px; height: 24px; background-color: #0071c2 !important; font-size: 11px;">
+                        <%= userInitial %>
+                    </div>
+                    <span>About me</span>
+                </button>
+
+                <button class="nav-link dash-sidebar-btn" id="menu-trips-tab" data-bs-toggle="tab" data-bs-target="#pane-trips" type="button" role="tab">
+                    <i class="fa-solid fa-suitcase" style="color: #a16447;"></i>
+                    <span>Trips</span>
+                </button>
+
+                <button class="nav-link dash-sidebar-btn" id="menu-messages-tab" data-bs-toggle="tab" data-bs-target="#pane-messages" type="button" role="tab">
+                    <i class="fa-regular fa-message"></i>
+                    <span>Messages</span>
+                </button>
+
+                <button class="nav-link dash-sidebar-btn" id="menu-notifications-tab" data-bs-toggle="tab" data-bs-target="#pane-notifications" type="button" role="tab">
+                    <i class="fa-regular fa-bell"></i>
+                    <span>Notifications</span>
+                </button>
+
+                <button class="nav-link dash-sidebar-btn" id="menu-settings-tab" data-bs-toggle="tab" data-bs-target="#pane-settings" type="button" role="tab">
+                    <i class="fa-regular fa-id-card"></i>
+                    <span>Personal info</span>
+                </button>
+
+                <button class="nav-link dash-sidebar-btn" id="menu-languages-tab" data-bs-toggle="tab" data-bs-target="#pane-languages" type="button" role="tab">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>Language & region</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-lg-9 ps-md-4">
+            <div class="tab-content" id="dashboardMasterPanels">
+                
+                <div class="tab-pane fade show active" id="pane-profile" role="tabpanel">
+                    <div class="tab-content" id="profileInternalToggle">
+                        
+                        <div class="tab-pane fade show active" id="profile-sub-view">
+                            <div class="d-flex align-items-baseline gap-3 mb-2">
+                                <h2 class="pane-title">About me</h2>
+                                <button class="btn btn-sm btn-outline-dark px-3 py-1 rounded-pill fw-medium bg-white" style="font-size: 13px;" onclick="switchInternalProfileView('profile-sub-edit')">Edit</button>
+                            </div>
+                            <p class="text-muted-custom mb-4">Account profile context identifier: <span class="fw-semibold text-dark"><%= displayName %></span></p>
+
+                            <div class="card p-4 border border-secondary-subtle bg-white mb-4 shadow-sm" style="border-radius: 16px; max-width: 440px;">
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+                                         style="width: 72px; height: 72px; background-color: #f7e1e3 !important; color: #fe424d !important; font-size: 2rem;">
+                                        <%= userInitial %>
+                                    </div>
+                                    <div>
+                                        <h3 class="fw-bold text-dark mb-0 h4"><%= displayName %></h3>
+                                        <p class="text-muted small mb-0">Guest verified tier</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-4 border-secondary-subtle">
+                            <div class="d-flex align-items-center gap-3 text-muted">
+                                <i class="fa-regular fa-comment-dots" style="font-size: 1.2rem;"></i>
+                                <span class="fw-medium text-dark" style="font-size: 14px;">Reviews I've written</span>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="profile-sub-edit">
+                            <div class="mb-4">
+                                <h2 class="pane-title mb-1">My profile settings</h2>
+                                <p class="text-muted-custom">Add details to build trusted interactions across the application workspace platform layers.</p>
+                            </div>
+                            <div class="row align-items-center my-4 py-3 bg-light rounded-4 px-3 mx-0">
+                                <div class="col-auto">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 70px; height: 70px; background-color: #e8e0ff !important; color: #6a4bc2 !important; font-size: 2.2rem;">
+                                        <%= userInitial %>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h6 class="fw-bold text-dark mb-1">Profile custom badge initial</h6>
+                                    <p class="text-muted small mb-0">Renders matching authentication parameters.</p>
+                                </div>
+                            </div>
+                            <div class="settings-row">
+                                <div><div class="settings-label">Where I went to school</div><div class="settings-value">Not provided</div></div>
+                                <a href="#" class="settings-action-link">Add</a>
+                            </div>
+                            <div class="settings-row">
+                                <div><div class="settings-label">My work</div><div class="settings-value">Not provided</div></div>
+                                <a href="#" class="settings-action-link">Add</a>
+                            </div>
+                            <div class="settings-row">
+                                <div><div class="settings-label">Pets</div><div class="settings-value">Not provided</div></div>
+                                <a href="#" class="settings-action-link">Add</a>
+                            </div>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button class="btn text-white px-4 py-2 fw-bold btn-sm" style="background-color: #222222; border-radius: 8px;" onclick="switchInternalProfileView('profile-sub-view')">Done</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pane-trips" role="tabpanel">
+                    <h2 class="pane-title mb-4">Trips</h2>
+                    <div class="row align-items-center py-4">
+                        <div class="col-md-6 mb-4 mb-md-0 text-center">
+                            <div class="p-3 bg-white border shadow-sm mx-auto position-relative" style="max-width: 260px; border-radius: 16px;">
+                                <div class="d-flex align-items-center gap-3 p-2 border-bottom text-start">
+                                    <div class="bg-light rounded" style="width: 40px; height: 40px;"></div>
+                                    <div class="flex-grow-1"><div class="bg-light rounded mb-1" style="width: 70%; height: 10px;"></div><div class="bg-light rounded" style="width: 40%; height: 8px;"></div></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 p-2 text-start opacity-75">
+                                    <div class="bg-light rounded" style="width: 40px; height: 40px;"></div>
+                                    <div class="flex-grow-1"><div class="bg-light rounded mb-1" style="width: 60%; height: 10px;"></div><div class="bg-light rounded" style="width: 30%; height: 8px;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h3 class="fw-bold text-dark h3 mb-2" style="font-size: 1.5rem;">Build the perfect trip</h3>
+                            <p class="text-muted-custom mb-4">Explore homes, experiences and services. When you book, your reservations will appear here.</p>
+                            <a href="/listings" class="btn text-white px-4 py-2 fw-bold" style="background-color: #fe424d; border-radius: 8px; font-size: 15px;">Get started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pane-messages" role="tabpanel">
+                    <div class="border rounded-4 bg-white shadow-sm overflow-hidden row mx-0">
+                        <div class="col-md-4 p-3 msg-sidebar bg-light">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h4 class="fw-bold mb-0 text-dark h5">Messages</h4>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-white border rounded-circle"><i class="fa-solid fa-magnifying-glass font-size: 12px;"></i></button>
+                                    <button class="btn btn-sm btn-white border rounded-circle"><i class="fa-solid fa-sliders font-size: 12px;"></i></button>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 mb-3">
+                                <button class="btn btn-sm btn-dark rounded-pill px-3 py-1 fw-medium" style="font-size: 13px;">All</button>
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 bg-white text-dark fw-medium" style="font-size: 13px;">Unread</button>
+                            </div>
+                            <div class="text-center py-5">
+                                <i class="fa-regular fa-comments display-6 text-muted mb-2"></i>
+                                <p class="text-muted small mb-0">No threads match filters.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-8 p-5 text-center d-flex flex-column align-items-center justify-content-center bg-white">
+                            <i class="fa-regular fa-comment-dots text-muted mb-3 display-5"></i>
+                            <h5 class="fw-bold text-dark mb-1">You don't have any messages</h5>
+                            <p class="text-muted-custom mb-0" style="max-width: 300px;">When you receive a new message, it will appear here safely.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pane-notifications" role="tabpanel">
+                    <h2 class="pane-title border-bottom pb-3 mb-4">Notifications</h2>
+                    <div class="text-center py-5">
+                        <h4 class="fw-bold text-dark h4 mb-2">No notifications yet</h4>
+                        <p class="text-muted-custom mb-0">You've got a blank slate (for now). We'll let you know when updates arrive.</p>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pane-settings" role="tabpanel">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h2 class="pane-title mb-1">Personal information</h2>
+                        <p class="text-muted-custom mb-0">Manage core user attributes locked inside authentication registries.</p>
+                    </div>
+                    <div class="settings-row">
+                        <div><div class="settings-label">Legal name</div><div class="settings-value"><%= displayName %></div></div>
+                        <a href="#" class="settings-action-link">Edit</a>
+                    </div>
+                    <div class="settings-row">
+                        <div><div class="settings-label">Preferred first name</div><div class="settings-value">Not provided</div></div>
+                        <a href="#" class="settings-action-link">Add</a>
+                    </div>
+                    <div class="settings-row">
+                        <div><div class="settings-label">Email address</div><div class="settings-value">Verified storage address linked securely</div></div>
+                        <a href="#" class="settings-action-link">Edit</a>
+                    </div>
+                    <div class="settings-row">
+                        <div><div class="settings-label">Phone numbers</div><div class="settings-value">Add a number so confirmed guests and hosts can get in touch.</div></div>
+                        <a href="#" class="settings-action-link">Add</a>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pane-languages" role="tabpanel">
+                    <div class="card p-4 bg-white border shadow-sm rounded-4">
+                        <div class="border-bottom pb-3 mb-4">
+                            <h4 class="fw-bold text-dark mb-1">Language and region configuration settings</h4>
+                            <p class="text-muted small mb-0">Select preferred active localization configurations parameters.</p>
+                        </div>
+                        <div class="bg-light p-3 rounded-3 d-flex justify-content-between align-items-center mb-4">
+                            <div><div class="fw-bold text-dark small mb-1">Translation tool toggles</div><div class="text-muted" style="font-size: 12px;">Automatically translate descriptions and reviews to English parameters.</div></div>
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked style="transform: scale(1.2); cursor: pointer;"></div>
+                        </div>
+                        <h6 class="fw-bold text-dark mb-3">Suggested languages and regions</h6>
+                        <div class="row g-3">
+                            <div class="col-6 col-sm-4 col-md-3"><div class="lang-box border"><div class="fw-bold text-dark small">English</div><div class="text-muted" style="font-size: 11px;">United States</div></div></div>
+                            <div class="col-6 col-sm-4 col-md-3"><div class="lang-box border"><div class="fw-bold text-dark small">English</div><div class="text-muted" style="font-size: 11px;">United Kingdom</div></div></div>
+                            <div class="col-6 col-sm-4 col-md-3"><div class="lang-box border"><div class="fw-bold text-dark small">हिन्दी</div><div class="text-muted" style="font-size: 11px;">भारत</div></div></div>
+                            <div class="col-6 col-sm-4 col-md-3"><div class="lang-box border"><div class="fw-bold text-dark small">मराठी</div><div class="text-muted" style="font-size: 11px;">भारत</div></div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Handles toggles for View Mode vs Edit Mode inside the About Me tab
+    function switchInternalProfileView(targetSubPaneId) {
+        const viewPane = document.getElementById('profile-sub-view');
+        const editPane = document.getElementById('profile-sub-edit');
+        
+        if(targetSubPaneId === 'profile-sub-edit') {
+            viewPane.classList.remove('show', 'active');
+            editPane.classList.add('show', 'active');
+        } else {
+            editPane.classList.remove('show', 'active');
+            viewPane.classList.add('show', 'active');
+        }
+    }
+
+    // Parses incoming URL request query parameters to select tabs on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabTarget = urlParams.get('tab');
+        
+        if (activeTabTarget) {
+            let selectorId = '';
+            if (activeTabTarget === 'trips') selectorId = 'menu-trips-tab';
+            else if (activeTabTarget === 'messages') selectorId = 'menu-messages-tab';
+            else if (activeTabTarget === 'notifications') selectorId = 'menu-notifications-tab';
+            else if (activeTabTarget === 'settings') selectorId = 'menu-settings-tab';
+            else if (activeTabTarget === 'languages') selectorId = 'menu-languages-tab';
+            
+            const targetTriggerBtn = document.getElementById(selectorId);
+            if (targetTriggerBtn) {
+                const bootstrapTabInstance = new bootstrap.Tab(targetTriggerBtn);
+                bootstrapTabInstance.show();
+            }
+        }
+    });
+</script>

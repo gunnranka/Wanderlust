@@ -29,7 +29,6 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
 // --- DATABASE CONNECTION ---
-// 🟢 CHANGED: Using Atlas URL from .env
 const dbUrl = process.env.ATLASDB_URL;
 
 async function main() { 
@@ -53,8 +52,9 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
 app.use(cookieParser(process.env.SECRET));
+
 // --- MONGO STORE SETUP ---
-const store = MongoStore.create({ // Ensure this matches your require name
+const store = MongoStore.create({ 
     mongoUrl: dbUrl,
     crypto: {
         secret: process.env.SECRET,
@@ -64,7 +64,7 @@ const store = MongoStore.create({ // Ensure this matches your require name
 
 // --- SESSION & FLASH SETUP ---
 const sessionOptions = {
-    store: store, // 🟢 ADDED: Tells session to save in Atlas
+    store: store, 
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
@@ -78,29 +78,43 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
-// --- PASSPORT CONFIGURATION ---
-app.use(passport.initialize());
-app.use(passport.session()); 
-passport.use(new LocalStrategy(User.authenticate()));
-
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-// --- 2. LOCAL VARIABLES & LANGUAGE MIDDLEWARE ---
-app.use((req, res, next) => {
+// --- 2. LOCAL VARIABLES & GLOBAL SESSION MIDDLEWARE ---
+app.use(async (req, res, next) => {
     let lang = req.cookies.lang || "en";
     res.locals.t = translations[lang] || translations["en"];
     res.locals.currLang = lang;
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
-    res.locals.currUser = req.user; 
+    
+    // Set global visibility for current logged-in user session ID
+    res.locals.currUser = req.session.user_id || null; 
+
+    // Fetch the active user globally to calculate and inject initials on all pages
+    if (req.session.user_id) {
+        try {
+            const User = require("./models/user.js"); 
+            const user = await User.findById(req.session.user_id);
+            if (user) {
+                let name = user.username || user.email.split("@")[0];
+                res.locals.userInitial = name.charAt(0).toUpperCase();
+            } else {
+                res.locals.userInitial = null;
+            }
+        } catch (err) {
+            console.error("Error setting global user initials:", err);
+            res.locals.userInitial = null;
+        }
+    } else {
+        res.locals.userInitial = null;
+    }
+    
     next();
 });
 
 // --- 3. HELPER ROUTE: GET CURRENT USER ID ---
 app.get("/get-user-id", (req, res) => {
-    if(req.user) {
-        res.send(`<h1>Your User ID is:</h1><p>${req.user._id}</p>`);
+    if(req.session.user_id) {
+        res.send(`<h1>Your User ID is:</h1><p>${req.session.user_id}</p>`);
     } else {
         res.send("<h1>Please log in first!</h1>");
     }
@@ -113,12 +127,17 @@ app.get("/change-lang/:lang", (req, res) => {
     res.redirect("/listings"); 
 });
 
-// --- MAIN ROUTE DELEGATION ---
+// 🟢 FIXED MOVED BLOCK: Router declarations must sit ABOVE the 404 wildcard handler
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter); 
 
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
 // --- ERROR HANDLING ---
+// This wildcard catcher will now execute correctly only if none of the routes above match the URL
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError(404, "Page Not Found!"));
 });

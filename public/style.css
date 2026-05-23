@@ -237,3 +237,79 @@ footer {
     border: 1px solid #ddd;
     display: block;
 }
+/* Custom Airbnb-style Search Grid Layout */
+.search-container {
+    transition: all 0.2s ease;
+    border: 1px solid #ebebeb !important;
+}
+
+.search-container:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+}
+
+.search-input-block {
+    cursor: pointer;
+    border-radius: 24px;
+    transition: background-color 0.15s ease;
+}
+
+.search-input-block:hover {
+    background-color: #f7f7f7;
+}
+
+.search-input-block input:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    background-color: transparent !important;
+}
+
+/* Location Autocomplete Dropdown styling */
+#db-location-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 2000;
+}
+
+.btn-counter {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+/* Real Airbnb-Style Counter Buttons Override */
+.btn-counter {
+    width: 32px !important;
+    height: 32px !important;
+    border: 1px solid #b0b0b0 !important;
+    background-color: #ffffff !important;
+    color: #717171 !important;
+    font-size: 18px !important;
+    font-weight: 300 !important; /* Thin styling for thin plus/minus signs */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important; /* Forces absolute circular outline */
+    transition: all 0.2s ease !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.btn-counter:hover {
+    border-color: #222222 !important;
+    color: #222222 !important;
+    background-color: #ffffff !important;
+}
+
+/* Counter numbers tracking text marker layout alignment */
+#adult-count, #child-count {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: #222222 !important;
+    min-width: 20px;
+    text-align: center;
+}

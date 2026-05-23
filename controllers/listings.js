@@ -1,10 +1,25 @@
 const Listing = require("../models/listing");
 
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({});
+    const { search } = req.query;
+    let allListings;
+
+    // Check if a user typed a keyword in the search bar
+    if (search && search.trim() !== "") {
+        // Find listings where title OR location matches the search string (case-insensitive)
+        allListings = await Listing.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } }
+            ]
+        });
+    } else {
+        // If no search query, display everything as usual
+        allListings = await Listing.find({});
+    }
+
     res.render("listings/index.ejs", { allListings });
 };
-
 module.exports.renderNewForm = (req, res) => {
     res.render("listings/new.ejs");
 };
