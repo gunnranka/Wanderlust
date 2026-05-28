@@ -1,131 +1,149 @@
 <nav class="navbar navbar-expand-md sticky-top bg-white border-bottom shadow-sm" style="z-index: 99999 !important;">
-    <div class="container-fluid px-md-5">
-        <a class="navbar-brand" href="/listings">
+    <div class="container-fluid px-2 px-sm-3 px-md-5">
+        <a class="navbar-brand me-2 me-sm-3" href="/listings">
             <i class="fa-solid fa-compass" style="color: #fe424d; font-size: 2rem;"></i>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            
-            <div class="navbar-nav me-auto">
-                <a class="nav-link" href="/listings"><%= t.home %></a>
-                <a class="nav-link" href="/listings/new" style="white-space: nowrap;"><%= t.addNew %></a>
+        <div class="d-flex align-items-center gap-2 order-md-3">
+            <div class="nav-item dropdown">
+                <a class="nav-link px-2 dropdown-toggle no-caret" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-globe fs-5 text-dark"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 12px;">
+                    <li><a class="dropdown-item" href="/change-lang/en">English</a></li>
+                    <li><a class="dropdown-item" href="/change-lang/hi">हिन्दी</a></li>
+                </ul>
             </div>
 
-            <div class="search-container position-relative mx-auto bg-white border shadow-sm rounded-pill py-2 px-2 d-none d-md-flex align-items-center" style="max-width: 720px; width: 100%;">
-                <form action="/listings" method="GET" class="w-100 d-flex align-items-center m-0">
+            <div class="nav-item position-relative" id="customProfileDropdownMenuContainer">
+                <button class="btn btn-white border rounded-pill d-flex align-items-center gap-2 px-2 px-sm-3 py-1.5 shadow-sm bg-white" 
+                        type="button" id="manualProfileToggleBtn" style="transition: 0.2s; cursor: pointer;">
+                    <i class="fa-solid fa-bars text-secondary" style="font-size: 14px; pointer-events: none;"></i>
                     
-                    <div class="search-input-block border-end px-3 py-1 flex-grow-1 position-relative" style="width: 35%;">
-                        <label class="fw-bold text-dark d-block mb-0" style="font-size: 11px; letter-spacing: 0.5px;">Where</label>
-                        <input type="text" name="search" id="where-input" class="form-control border-0 p-0 bg-transparent text-muted small" placeholder="Search destinations" autocomplete="off">
-                        <div id="db-location-dropdown" class="dropdown-menu shadow border-0 mt-2 p-2 w-100 d-none" style="max-height: 250px; overflow-y: auto; border-radius: 16px;"></div>
-                    </div>
-
-                    <div class="search-input-block border-end px-3 py-1 flex-grow-1" style="width: 35%;">
-                        <label class="fw-bold text-dark d-block mb-0" style="font-size: 11px; letter-spacing: 0.5px;">When</label>
-                        <input type="text" id="when-input" class="form-control border-0 p-0 bg-transparent text-muted small" placeholder="Add dates" readonly>
-                    </div>
-
-                    <div class="search-input-block px-3 py-1 position-relative d-flex align-items-center justify-content-between" style="width: 30%;">
-                        <div class="dropdown">
-                            <div class="dropdown-toggle text-start text-decoration-none border-0 bg-transparent p-0" data-bs-toggle="dropdown" data-bs-auto-close="outside" style="cursor: pointer;">
-                                <label class="fw-bold text-dark d-block mb-0" style="font-size: 11px; letter-spacing: 0.5px;">Who</label>
-                                <span id="guests-placeholder" class="text-muted small">Add guests</span>
-                            </div>
-                            <div class="dropdown-menu p-4 shadow border-0 mt-3 dropdown-menu-end" style="width: 320px; border-radius: 24px;">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div>
-                                        <span class="fw-bold d-block text-dark" style="font-size: 14px;">Adults</span>
-                                        <span class="text-muted" style="font-size: 11px;">Ages 13 or above</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button type="button" class="btn btn-counter" onclick="updateCount('adults', -1)">−</button>
-                                        <span id="adult-count" class="fw-bold text-dark">0</span>
-                                        <button type="button" class="btn btn-counter" onclick="updateCount('adults', 1)">+</button>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="fw-bold d-block text-dark" style="font-size: 14px;">Children</span>
-                                        <span class="text-muted" style="font-size: 11px;">Ages 2–12</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <button type="button" class="btn btn-counter" onclick="updateCount('children', -1)">−</button>
-                                        <span id="child-count" class="fw-bold text-dark">0</span>
-                                        <button type="button" class="btn btn-counter" onclick="updateCount('children', 1)">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn text-white rounded-circle d-flex align-items-center justify-content-center p-0" style="background-color: #fe424d; width: 36px; height: 36px; min-width: 36px;">
-                            <i class="fa-solid fa-magnifying-glass" style="font-size: 13px;"></i>
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-
-            <div class="navbar-nav ms-auto align-items-center gap-2">
-                <div class="nav-item dropdown me-1">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-globe"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/change-lang/en">English</a></li>
-                        <li><a class="dropdown-item" href="/change-lang/hi">हिन्दी</a></li>
-                    </ul>
-                </div>
-
-                <div class="nav-item position-relative" id="customProfileDropdownMenuContainer">
-                    <button class="btn btn-white border rounded-pill d-flex align-items-center gap-2 px-3 py-2 shadow-sm bg-white" 
-                            type="button" id="manualProfileToggleBtn" style="transition: 0.2s; cursor: pointer; position: relative;">
-                        <i class="fa-solid fa-bars text-secondary" style="font-size: 14px; pointer-events: none;"></i>
-                        
-                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
-                             style="width: 28px; height: 28px; background-color: #fe424d !important; font-size: 12px; min-width: 28px; pointer-events: none;">
-                            <% if (currUser && typeof userInitial !== 'undefined' && userInitial) { %>
-                                <%= userInitial %>
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 11px;"></i>
-                            <% } %>
-                        </div>
-                    </button>
-                    
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2 py-3 d-none" 
-                        id="customProfileListMenu"
-                        style="border-radius: 16px; min-width: 240px; position: absolute !important; right: 0px !important; left: auto !important; top: 100% !important; z-index: 999999 !important;">
-                        <% if(!currUser) { %>
-                            <li><a class="dropdown-item fw-bold py-2 px-3" href="/signup">Signup</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="/login">Login</a></li>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+                         style="width: 28px; height: 28px; background-color: #fe424d !important; font-size: 12px; min-width: 28px; pointer-events: none;">
+                        <% if (currUser && typeof userInitial !== 'undefined' && userInitial) { %>
+                            <%= userInitial %>
                         <% } else { %>
-                            <li><a class="dropdown-item py-2 px-3" href="#"><i class="fa-regular fa-heart me-3 text-secondary"></i>Wishlists</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=trips"><i class="fa-solid fa-suitcase me-3 text-secondary"></i>Trips</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=messages"><i class="fa-regular fa-message me-3 text-secondary"></i>Messages</a></li>
-                            <li><a class="dropdown-item py-2 px-3 fw-bold text-dark" href="/users/profile"><i class="fa-regular fa-circle-user me-3 text-secondary"></i>Profile</a></li>
-                            
-                            <li><hr class="dropdown-divider my-2"></li>
-                            
-                            <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=notifications"><i class="fa-regular fa-bell me-3 text-secondary"></i>Notifications</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=settings"><i class="fa-regular fa-gear me-3 text-secondary"></i>Account settings</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=languages"><i class="fa-solid fa-globe me-3 text-secondary"></i>Languages & currency</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=help"><i class="fa-regular fa-circle-question me-3 text-secondary"></i>Help Centre</a></li>
-                            
-                            <li><hr class="dropdown-divider my-2"></li>
-                            
-                            <li><a class="dropdown-item py-2 px-3" href="/listings/new">Become a host</a></li>
-                            <li><a class="dropdown-item py-2 px-3" href="#">Refer a host</a></li>
-                            
-                            <li><hr class="dropdown-divider my-2"></li>
-                            <li><a class="dropdown-item text-danger py-2 px-3" href="/logout"><i class="fa-solid fa-right-from-bracket me-3"></i>Logout</a></li>
+                            <i class="fa-solid fa-user" style="font-size: 11px;"></i>
                         <% } %>
-                    </ul>
-                </div>
+                    </div>
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2 py-3 d-none" 
+                    id="customProfileListMenu"
+                    style="border-radius: 16px; min-width: 240px; position: absolute !important; right: 0px !important; left: auto !important; top: 100% !important; z-index: 999999 !important;">
+                    <% if(!currUser) { %>
+                        <li><a class="dropdown-item fw-bold py-2 px-3" href="/signup">Signup</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="/login">Login</a></li>
+                    <% } else { %>
+                        <li><a class="dropdown-item py-2 px-3" href="#"><i class="fa-regular fa-heart me-3 text-secondary"></i>Wishlists</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=trips"><i class="fa-solid fa-suitcase me-3 text-secondary"></i>Trips</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=messages"><i class="fa-regular fa-message me-3 text-secondary"></i>Messages</a></li>
+                        <li><a class="dropdown-item py-2 px-3 fw-bold text-dark" href="/users/profile"><i class="fa-regular fa-circle-user me-3 text-secondary"></i>Profile</a></li>
+                        
+                        <li><hr class="dropdown-divider my-2"></li>
+                        
+                        <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=notifications"><i class="fa-regular fa-bell me-3 text-secondary"></i>Notifications</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=settings"><i class="fa-regular fa-gear me-3 text-secondary"></i>Account settings</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=languages"><i class="fa-solid fa-globe me-3 text-secondary"></i>Languages & currency</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="/users/profile?tab=help"><i class="fa-regular fa-circle-question me-3 text-secondary"></i>Help Centre</a></li>
+                        
+                        <li><hr class="dropdown-divider my-2"></li>
+                        
+                        <li><a class="dropdown-item py-2 px-3" href="/listings/new">Become a host</a></li>
+                        <li><a class="dropdown-item py-2 px-3" href="#">Refer a host</a></li>
+                        
+                        <li><hr class="dropdown-divider my-2"></li>
+                        <li><a class="dropdown-item text-danger py-2 px-3" href="/logout"><i class="fa-solid fa-right-from-bracket me-3"></i>Logout</a></li>
+                    <% } %>
+                </ul>
+            </div>
 
+            <button class="navbar-toggler border-0 p-1 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLinksWrapper">
+                <span class="navbar-toggler-icon" style="width: 22px; height: 22px;"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse order-md-1" id="navbarLinksWrapper">
+            <div class="navbar-nav me-md-auto mt-2 mt-md-0 mb-2 mb-md-0 gap-1">
+                <a class="nav-link py-1 px-2 rounded" href="/listings"><%= t.home %></a>
+                <a class="nav-link py-1 px-2 rounded" href="/listings/new" style="white-space: nowrap;"><%= t.addNew %></a>
             </div>
         </div>
+
+        <div class="order-md-2 mt-2 mt-md-0 flex-grow-1 mx-md-3 search-master-block" style="max-width: 640px; width: 100%;">
+            
+            <button class="btn w-100 d-md-none border shadow-sm rounded-pill py-2 px-3 d-flex align-items-center justify-content-between bg-white" 
+                    type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchDropdown" style="border-color: #ebebeb !important;">
+                <div class="d-flex align-items-center gap-2 text-start">
+                    <i class="fa-solid fa-magnifying-glass text-danger small"></i>
+                    <div>
+                        <span class="fw-bold d-block text-dark small" style="line-height: 1.2;">Where to?</span>
+                        <span class="text-muted extra-small">Anywhere • Any week • Add guests</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-sliders text-secondary small"></i>
+            </button>
+
+            <div class="collapse d-md-flex search-wrapper-panel mt-2 mt-md-0" id="mobileSearchDropdown">
+                <div class="search-container position-relative bg-white border shadow-sm rounded-4 rounded-pill-md p-3 p-md-1 d-flex flex-column flex-md-row align-items-center w-100">
+                    <form action="/listings" method="GET" class="w-100 d-flex flex-column flex-md-row align-items-center m-0 gap-3 gap-md-0">
+                        
+                        <div class="search-input-block border-end-md px-3 py-2 py-md-1 flex-grow-1 position-relative w-100 w-md-35">
+                            <label class="fw-bold text-dark d-block mb-0 search-label">Where</label>
+                            <input type="text" name="search" id="where-input" class="form-control border-0 p-0 bg-transparent text-muted small" placeholder="Search destinations" autocomplete="off">
+                            <div id="db-location-dropdown" class="dropdown-menu shadow border-0 mt-2 p-2 w-100 d-none" style="max-height: 250px; overflow-y: auto; border-radius: 16px; z-index: 100000;"></div>
+                        </div>
+
+                        <div class="search-input-block border-end-md px-3 py-2 py-md-1 flex-grow-1 w-100 w-md-35">
+                            <label class="fw-bold text-dark d-block mb-0 search-label">When</label>
+                            <input type="text" id="when-input" class="form-control border-0 p-0 bg-transparent text-muted small" placeholder="Add dates" readonly>
+                        </div>
+
+                        <div class="search-input-block px-3 py-2 py-md-1 position-relative d-flex align-items-center justify-content-between w-100 w-md-30">
+                            <div class="dropdown flex-grow-1">
+                                <div class="dropdown-toggle text-start text-decoration-none border-0 bg-transparent p-0 w-100" data-bs-toggle="dropdown" data-bs-auto-close="outside" style="cursor: pointer;">
+                                    <label class="fw-bold text-dark d-block mb-0 search-label">Who</label>
+                                    <span id="guests-placeholder" class="text-muted small">Add guests</span>
+                                </div>
+                                <div class="dropdown-menu p-4 shadow border-0 mt-3 dropdown-menu-end custom-guest-box" style="border-radius: 24px;">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div>
+                                            <span class="fw-bold d-block text-dark" style="font-size: 14px;">Adults</span>
+                                            <span class="text-muted" style="font-size: 11px;">Ages 13 or above</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <button type="button" class="btn btn-counter" onclick="updateCount('adults', -1)">−</button>
+                                            <span id="adult-count" class="fw-bold text-dark">0</span>
+                                            <button type="button" class="btn btn-counter" onclick="updateCount('adults', 1)">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="fw-bold d-block text-dark" style="font-size: 14px;">Children</span>
+                                            <span class="text-muted" style="font-size: 11px;">Ages 2–12</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <button type="button" class="btn btn-counter" onclick="updateCount('children', -1)">−</button>
+                                            <span id="child-count" class="fw-bold text-dark">0</span>
+                                            <button type="button" class="btn btn-counter" onclick="updateCount('children', 1)">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn text-white rounded-pill rounded-circle-md d-flex align-items-center justify-content-center gap-2 py-2 px-3 py-md-0 px-md-0 search-action-btn" style="background-color: #fe424d;">
+                                <i class="fa-solid fa-magnifying-glass" style="font-size: 13px;"></i>
+                                <span class="d-md-none fw-semibold small">Search</span>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </nav>
 
@@ -135,14 +153,12 @@
         const listMenu = document.getElementById("customProfileListMenu");
 
         if (toggleBtn && listMenu) {
-            // Toggle menu display state when button is clicked
             toggleBtn.addEventListener("click", function(event) {
                 event.stopPropagation();
                 listMenu.classList.toggle("d-none");
                 listMenu.classList.toggle("show");
             });
 
-            // Close the menu automatically when clicking anywhere else on the screen
             document.addEventListener("click", function(event) {
                 if (!document.getElementById("customProfileDropdownMenuContainer").contains(event.target)) {
                     listMenu.classList.add("d-none");
@@ -156,14 +172,33 @@
 <style>
     .search-container { border: 1px solid #ebebeb !important; transition: all 0.2s ease; }
     .search-container:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important; }
-    .search-input-block { cursor: pointer; border-radius: 24px; transition: background-color 0.15s ease; }
+    .search-input-block { cursor: pointer; border-radius: 12px; transition: background-color 0.15s ease; }
     .search-input-block:hover { background-color: #f7f7f7; }
     .search-input-block input:focus { box-shadow: none !important; outline: none !important; background-color: transparent !important; }
+    .no-caret::after { display: none !important; }
+    .extra-small { font-size: 11px !important; }
+    .search-label { font-size: 11px; letter-spacing: 0.5px; }
 
     .btn-counter { width: 32px !important; height: 32px !important; border: 1px solid #b0b0b0 !important; background-color: #ffffff !important; color: #717171 !important; font-size: 18px !important; font-weight: 300 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important; transition: all 0.2s ease !important; padding: 0 !important; box-shadow: none !important; }
     .btn-counter:hover { border-color: #222222 !important; color: #222222 !important; background-color: #ffffff !important; }
     #adult-count, #child-count { font-size: 16px !important; font-weight: 400 !important; color: #222222 !important; min-width: 24px; text-align: center; display: inline-block; }
     .dropdown-item { color: #222222 !important; font-size: 14px; }
     .dropdown-item i { color: #666666 !important; }
-    @media (max-width: 991px) { .search-container { width: 100% !important; margin-bottom: 1rem; } }
+    .custom-guest-box { width: 320px; }
+
+    @media (max-width: 767.98px) {
+        .search-wrapper-panel { width: 100%; }
+        .search-container { border-radius: 16px !important; margin-top: 8px; }
+        .search-action-btn { width: 100% !important; height: 40px !important; border-radius: 8px !important; margin-top: 8px; }
+        .border-end-md { border-bottom: 1px solid #ebebeb !important; border-right: none !important; }
+        .custom-guest-box { width: 100% !important; position: static !important; float: none !important; box-shadow: none !important; border: 1px solid #ebebeb !important; margin-top: 8px !important; }
+        .navbar-collapse { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 8px; }
+    }
+    @media (min-width: 768px) {
+        .border-end-md { border-right: 1px solid #ebebeb !important; }
+        .w-md-35 { width: 35% !important; }
+        .w-md-30 { width: 30% !important; }
+        .rounded-circle-md { border-radius: 50% !important; width: 36px !important; height: 36px !important; min-width: 36px !important; }
+        .rounded-pill-md { border-radius: 50rem !important; }
+    }
 </style>
